@@ -33,7 +33,7 @@
                android:layout_marginTop="16dp"
                android:hint="@string/text_yoziladi"
                android:ems="10"
-               android:inputType="textPersonName"
+               android:inputType="textMultiLine"
                android:text=""
                app:layout_constraintTop_toTopOf="parent"
                tools:ignore="Autofill"

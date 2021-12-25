@@ -5,9 +5,12 @@ import android.content.ContentValues
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.SparseArray
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -15,8 +18,15 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.vision.Frame
+import com.google.android.gms.vision.text.TextBlock
+import com.google.android.gms.vision.text.TextRecognizer
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
 import mening.dasturim.myvoiceapp.R
 import mening.dasturim.myvoiceapp.databinding.ActivityMainBinding
+import java.lang.Exception
+import java.lang.StringBuilder
 
 class MainActivity : AppCompatActivity() {
 
@@ -87,18 +97,18 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
-        alertDialog.create()
+        alertDialog.create().show()
     }
 
-    private fun pickGallery() {
+    internal fun pickGallery() {
         val intent = Intent(Intent.ACTION_PICK)
-        intent.setType("image/*")
+        intent.type = "image/*"
         startActivityForResult(intent, Constants.PICK_GALLERY_PERMISSION)
     }
 
-    private fun pickCamera() {
-        val values: ContentValues = ContentValues()
-        values.put(MediaStore.Images.Media.TITLE, "Yaangisini ushlash")
+    internal fun pickCamera() {
+        val values = ContentValues()
+        values.put(MediaStore.Images.Media.TITLE, "Yangisini ushlash")
         values.put(MediaStore.Images.Media.DESCRIPTION, "Rasmnan textga olib otish")
 
         image_uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)!!
@@ -109,7 +119,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun requestStoragePermission() {
+    internal fun requestStoragePermission() {
         ActivityCompat.requestPermissions(
             this,
             storagePermission,
@@ -126,18 +136,18 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun requestCameraPermission() {
+    internal fun requestCameraPermission() {
         ActivityCompat.requestPermissions(this, cameraPermission, Constants.CHECK_CAMERA_PERMISSION)
     }
 
     internal fun checkCameraPermission(): Boolean {
         val result: Boolean = ContextCompat.checkSelfPermission(
             this,
-            android.Manifest.permission.CAMERA
+            Manifest.permission.CAMERA
         ) == (PackageManager.PERMISSION_GRANTED)
         val result1 = ContextCompat.checkSelfPermission(
             this,
-            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
         ) == (PackageManager.PERMISSION_GRANTED)
         return result && result1
     }
@@ -181,5 +191,64 @@ class MainActivity : AppCompatActivity() {
 
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == RESULT_OK){
+            if (requestCode== Constants.PICK_GALLERY_PERMISSION){
+                CropImage.activity(data?.data)
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .start(this)
+            }
+            if (requestCode == Constants.PICK_CAMER_PERMISSION){
+                CropImage.activity(image_uri)
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .start(this)
+
+            }
+        }
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
+           val result: CropImage.ActivityResult = CropImage.getActivityResult(data)
+
+            if (resultCode == RESULT_OK){
+                val resultUri:Uri = result.uri
+
+                activityMainBinding.imageTv.setImageURI(resultUri)
+
+                val bitmapDrawable:BitmapDrawable=activityMainBinding.imageTv.drawable as BitmapDrawable
+                val bitmap : Bitmap=bitmapDrawable.bitmap
+
+                val recoginizer:TextRecognizer=TextRecognizer.Builder(applicationContext).build()
+
+                if (!recoginizer.isOperational){
+                    Toast.makeText(this ,"error recoginizer",Toast.LENGTH_SHORT).show()
+
+                }else{
+                    val frame:Frame=Frame.Builder().setBitmap(bitmap).build()
+                    val items: SparseArray<TextBlock> =recoginizer.detect(frame)
+
+                    val sb:StringBuilder= StringBuilder()
+
+                    for (i in 0 until items.size() step 1){
+                        val myItems : TextBlock=items.valueAt(i)
+                        sb.append(myItems.value)
+                        sb.append("\n")
+
+                    }
+                    activityMainBinding.evNatija.setText(sb.toString())
+
+                }
+            }
+            else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE){
+
+                val error:Exception=result.error
+
+                Toast.makeText(this,"" +error,Toast.LENGTH_SHORT).show()
+
+
+            }
+        }
     }
 }
