@@ -4,17 +4,58 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".main.MainActivity"
     >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+   <ScrollView
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+
+       <androidx.appcompat.widget.LinearLayoutCompat
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_margin="16dp"
+           android:orientation="vertical">
+
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:text="@string/natija"
+               android:textSize="24sp"
+               android:textStyle="bold"
+               android:textColor="@color/black"
+               android:textAlignment="center"/>
+
+           <EditText
+               android:id="@+id/ev_natija"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginTop="16dp"
+               android:hint="@string/text_yoziladi"
+               android:ems="10"
+               android:inputType="textPersonName"
+               android:text=""
+               app:layout_constraintTop_toTopOf="parent"
+               tools:ignore="Autofill"
+               />
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:text="@string/rasmni_korish"
+               android:textSize="24sp"
+               android:textStyle="bold"
+               android:textColor="@color/black"
+               android:textAlignment="center"/>
+           <ImageView
+               android:id="@+id/imageTv"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:maxHeight="250dp"
+               tools:ignore="ContentDescription"
+               />
+
+       </androidx.appcompat.widget.LinearLayoutCompat>
+
+   </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

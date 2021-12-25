@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">MyVoiceApp</string>
+    <string name="natija">Natija</string>
+    <string name="text_yoziladi">text yoziladi</string>
+    <string name="rasmni_korish">Rasmni korish</string>
+    <string name="rasm_qo_shish">Rasm qo\'shish</string>
+    <string name="sozlamalar">Sozlamalar</string>
 </resources>
