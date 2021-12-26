@@ -10,6 +10,8 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.speech.RecognizerIntent
+import android.speech.tts.TextToSpeech
 import android.util.SparseArray
 import android.view.Menu
 import android.view.MenuItem
@@ -27,13 +29,16 @@ import mening.dasturim.myvoiceapp.R
 import mening.dasturim.myvoiceapp.databinding.ActivityMainBinding
 import java.lang.Exception
 import java.lang.StringBuilder
+import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
 
     private lateinit var activityMainBinding: ActivityMainBinding
     lateinit var cameraPermission: Array<String>
     lateinit var storagePermission: Array<String>
     lateinit var image_uri: Uri
+
+    private var tts :TextToSpeech? =null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +51,27 @@ class MainActivity : AppCompatActivity() {
 
         storagePermission =
             arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+        tts = TextToSpeech(this,this)
+
+
+        activityMainBinding.playBtn.isEnabled=true
+        activityMainBinding.playBtn.setOnClickListener {
+            speak()
+        }
+
+//        activityMainBinding.playBtn.setOnClickListener {
+//            val speachIntent=Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+//            speachIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+//            speachIntent.putExtra(RecognizerIntent.EXTRA_PROMPT,"textdan gapirishga")
+//            startActivityForResult(speachIntent,Constants.RECOGNIZER_RESULT)
+//        }
+
+    }
+
+    private fun speak() {
+        val text=activityMainBinding.evNatija.text.toString()
+        tts!!.speak(text,TextToSpeech.QUEUE_FLUSH,null,"")
 
     }
 
@@ -240,6 +266,7 @@ class MainActivity : AppCompatActivity() {
                     activityMainBinding.evNatija.setText(sb.toString())
 
                 }
+
             }
             else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE){
 
@@ -250,5 +277,36 @@ class MainActivity : AppCompatActivity() {
 
             }
         }
+//        if (requestCode == Constants.RECOGNIZER_RESULT && resultCode== RESULT_OK){
+//            val matches : ArrayList<String>? =
+//                data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+//
+//            activityMainBinding.evNatija.setText(matches?.get(0).toString())
+//        }
+    }
+
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS){
+            val result = tts!!.setLanguage(Locale.US)
+
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED){
+                Toast.makeText(this,"The Language specified is not supported!",Toast.LENGTH_SHORT).show()
+            }else{
+                activityMainBinding.playBtn.isEnabled=true
+
+            }
+        }else{
+            Toast.makeText(this,"Initialized fail",Toast.LENGTH_SHORT).show()
+
+        }
+    }
+
+    override fun onDestroy() {
+        if (tts != null){
+            tts!!.stop()
+            tts!!.shutdown()
+        }
+
+        super.onDestroy()
     }
 }
