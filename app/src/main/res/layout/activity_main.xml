@@ -4,64 +4,209 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F6F6F6"
     tools:context=".main.MainActivity"
     >
 
-   <ScrollView
-       android:layout_width="match_parent"
-       android:layout_height="match_parent">
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        >
 
-       <androidx.appcompat.widget.LinearLayoutCompat
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_margin="16dp"
-           android:orientation="vertical">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
 
-           <TextView
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:text="@string/natija"
-               android:textSize="24sp"
-               android:textStyle="bold"
-               android:textColor="@color/black"
-               android:textAlignment="center"/>
+            <ImageView
+                android:id="@+id/iv_back_arrow"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/voice_logo"
+                />
 
-           <EditText
-               android:id="@+id/ev_natija"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:layout_marginTop="16dp"
-               android:hint="@string/text_yoziladi"
-               android:ems="10"
-               android:inputType="textMultiLine"
-               android:text=""
-               app:layout_constraintTop_toTopOf="parent"
-               tools:ignore="Autofill"
-               />
-           <Button
-               android:id="@+id/play_btn"
-               android:layout_height="50dp"
-               android:layout_width="50dp"
-               android:background="@drawable/ic_baseline_play_arrow"
-               />
-           <TextView
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:text="@string/rasmni_korish"
-               android:textSize="24sp"
-               android:textStyle="bold"
-               android:textColor="@color/black"
-               android:textAlignment="center"/>
-           <ImageView
-               android:id="@+id/imageTv"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:maxHeight="250dp"
-               tools:ignore="ContentDescription"
-               />
+            <TextView
+                android:id="@+id/tv_main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/jonli"
+                android:textColor="@color/teal_200"
+                android:textIsSelectable="false"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/iv_back_arrow"
+                app:layout_constraintTop_toTopOf="parent"
+                />
 
-       </androidx.appcompat.widget.LinearLayoutCompat>
+            <ImageView
+                android:id="@+id/iv_menu"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_baseline_reorder_24"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-   </ScrollView>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
+        >
+
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/natija"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                />
+
+            <EditText
+                android:id="@+id/ev_natija"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:ems="10"
+                android:hint="@string/text_yoziladi"
+                android:inputType="textMultiLine"
+                android:text=""
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="Autofill"
+                />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:orientation="horizontal">
+
+
+                <Button
+                    android:id="@+id/play_btn"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:background="@drawable/ic_baseline_play_arrow"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/audioni_eshitish"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="24sp"
+                    android:layout_marginStart="24dp"
+                    android:textStyle="bold"
+                    />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/rasmni_korish"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:layout_marginTop="24dp"
+                android:textStyle="bold"
+                />
+
+            <ImageView
+                android:id="@+id/imageTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxHeight="250dp"
+                tools:ignore="ContentDescription"
+                />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </ScrollView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@color/white"
+        >
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            >
+
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/voice_image"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="4dp"
+                android:padding="2dp"
+                android:src="@drawable/ic_baseline_record_voice_over_24"
+                app:strokeColor="@android:color/darker_gray"
+                />
+
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/camera"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginBottom="12dp"
+                android:padding="2dp"
+                android:src="@drawable/ic_baseline_photo_camera_24"
+                app:strokeColor="@android:color/darker_gray"
+                />
+
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/gallery"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="4dp"
+                android:padding="2dp"
+                android:src="@drawable/ic_baseline_image_24"
+                app:strokeColor="@android:color/darker_gray"
+                />
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

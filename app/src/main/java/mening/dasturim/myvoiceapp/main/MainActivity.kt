@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
+import android.util.Log
 import android.util.SparseArray
 import android.view.Menu
 import android.view.MenuItem
@@ -25,11 +26,16 @@ import com.google.android.gms.vision.text.TextBlock
 import com.google.android.gms.vision.text.TextRecognizer
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
-import mening.dasturim.myvoiceapp.R
 import mening.dasturim.myvoiceapp.databinding.ActivityMainBinding
+import mening.dasturim.myvoiceapp.retrofit.ApiInterface
 import java.lang.Exception
 import java.lang.StringBuilder
 import java.util.*
+import okhttp3.ResponseBody
+import retrofit2.http.Url
+import java.io.*
+import java.net.URL
+
 
 class MainActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
 
@@ -37,6 +43,7 @@ class MainActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
     lateinit var cameraPermission: Array<String>
     lateinit var storagePermission: Array<String>
     lateinit var image_uri: Uri
+    lateinit var yourServiceInstance:ApiInterface
 
     private var tts :TextToSpeech? =null
 
@@ -57,7 +64,28 @@ class MainActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
 
         activityMainBinding.playBtn.isEnabled=true
         activityMainBinding.playBtn.setOnClickListener {
+        //    yourServiceInstance.downloadFile()
             speak()
+        }
+
+        activityMainBinding.camera.setOnClickListener {
+            if (!checkCameraPermission()) {
+                //if camera not allowed
+                requestCameraPermission()
+            } else {
+                pickCamera()
+            }
+        }
+
+
+        activityMainBinding.gallery.setOnClickListener {
+
+            if (!checkStoragePermission()) {
+                //if camera not allowed
+                requestStoragePermission()
+            } else {
+                pickGallery()
+            }
         }
 
 //        activityMainBinding.playBtn.setOnClickListener {
@@ -76,55 +104,55 @@ class MainActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
     }
 
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu, menu)
+//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+//        menuInflater.inflate(R.menu.menu, menu)
+//
+//        return true
+//    }
+//
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//
+//        when (item.itemId) {
+//            R.id.menu_image -> {
+//                showDialog()
+//            }
+//            R.id.menu_settings -> {
+//                Toast.makeText(this, "error keldi", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//        return super.onOptionsItemSelected(item)
+//    }
 
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        when (item.itemId) {
-            R.id.menu_image -> {
-                showDialog()
-            }
-            R.id.menu_settings -> {
-                Toast.makeText(this, "error keldi", Toast.LENGTH_SHORT).show()
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    fun showDialog() {
-        val names = arrayOf("Camera", "Gallery")
-
-        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this)
-
-        alertDialog.setTitle("Rasmni tanlang")
-        alertDialog.setItems(names, object : DialogInterface.OnClickListener {
-            override fun onClick(p0: DialogInterface?, postion: Int) {
-                if (postion == 0) {
-                    if (!checkCameraPermission()) {
-                        //if camera not allowed
-                        requestCameraPermission()
-                    } else {
-                        pickCamera()
-                    }
-                }
-                if (postion == 1) {
-                    if (!checkStoragePermission()) {
-                        //if camera not allowed
-                        requestStoragePermission()
-                    } else {
-                        pickGallery()
-                    }
-
-                }
-            }
-
-        })
-        alertDialog.create().show()
-    }
+//    fun showDialog() {
+//        val names = arrayOf("Camera", "Gallery")
+//
+//        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this)
+//
+//        alertDialog.setTitle("Rasmni tanlang")
+//        alertDialog.setItems(names, object : DialogInterface.OnClickListener {
+//            override fun onClick(p0: DialogInterface?, postion: Int) {
+//                if (postion == 0) {
+//                    if (!checkCameraPermission()) {
+//                        //if camera not allowed
+//                        requestCameraPermission()
+//                    } else {
+//                        pickCamera()
+//                    }
+//                }
+//                if (postion == 1) {
+//                    if (!checkStoragePermission()) {
+//                        //if camera not allowed
+//                        requestStoragePermission()
+//                    } else {
+//                        pickGallery()
+//                    }
+//
+//                }
+//            }
+//
+//        })
+//        alertDialog.create().show()
+//    }
 
     internal fun pickGallery() {
         val intent = Intent(Intent.ACTION_PICK)
@@ -309,4 +337,69 @@ class MainActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
 
         super.onDestroy()
     }
+
+    fun saveFile(body: ResponseBody?, pathWhereYouWantToSaveFile: String):String{
+        if (body==null)
+            return ""
+        var input: InputStream? = null
+        try {
+            input = body.byteStream()
+            //val file = File(getCacheDir(), "cacheFileAppeal.srl")
+            val fos = FileOutputStream(pathWhereYouWantToSaveFile)
+            fos.use { output ->
+                val buffer = ByteArray(4 * 1024) // or other buffer size
+                var read: Int
+                while (input.read(buffer).also { read = it } != -1) {
+                    output.write(buffer, 0, read)
+                }
+                output.flush()
+            }
+            return pathWhereYouWantToSaveFile
+        }catch (e:Exception){
+            Log.e("saveFile",e.toString())
+        }
+        finally {
+            input?.close()
+        }
+        return ""
+    }
+
+//    private fun writeResponseBodyToDisk(body: ResponseBody): Boolean {
+//        return try {
+//            // todo change the file location/name according to your needs
+//            val futureStudioIconFile =
+//                File(getExternalFilesDir(null) + File.separator.toString() + "Future Studio Icon.png")
+//            var inputStream: InputStream? = null
+//            var outputStream: OutputStream? = null
+//            try {
+//                val fileReader = ByteArray(4096)
+//                val fileSize = body.contentLength()
+//                var fileSizeDownloaded: Long = 0
+//                inputStream = body.byteStream()
+//                outputStream = FileOutputStream(futureStudioIconFile)
+//                while (true) {
+//                    val read: Int = inputStream.read(fileReader)
+//                    if (read == -1) {
+//                        break
+//                    }
+//                    outputStream?.write(fileReader, 0, read)
+//                    fileSizeDownloaded += read.toLong()
+//                    Log.d("TAG", "file download: $fileSizeDownloaded of $fileSize")
+//                }
+//                outputStream?.flush()
+//                true
+//            } catch (e: IOException) {
+//                false
+//            } finally {
+//                if (inputStream != null) {
+//                    inputStream.close()
+//                }
+//                if (outputStream != null) {
+//                    outputStream.close()
+//                }
+//            }
+//        } catch (e: IOException) {
+//            false
+//        }
+//    }
 }

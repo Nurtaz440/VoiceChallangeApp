@@ -1,12 +1,16 @@
 package mening.dasturim.myvoiceapp
 
-import com.google.android.gms.common.api.Response
-import mening.dasturim.myvoiceapp.main.Post
+
+import androidx.lifecycle.MutableLiveData
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.observers.DisposableObserver
+import io.reactivex.schedulers.Schedulers
 import mening.dasturim.myvoiceapp.retrofit.ApiClient
-import retrofit2.Retrofit
+
 
 class Repository {
-   // suspend fun getPost(): Response<Post>{
-   //     return ApiClient.getApiClient()
-   // }
+
+   // private val apiClient = ApiClient.getApiClient()
+
+
 }
